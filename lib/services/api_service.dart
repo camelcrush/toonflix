@@ -4,11 +4,14 @@ import 'package:http/http.dart' as http;
 import 'package:toonflix/models/webtoon_model.dart';
 
 class ApiService {
-  final String baseUrl = "https://webtoon-crawler.nomadcoders.workers.dev";
-  final String today = "today";
+  static const String baseUrl =
+      "https://webtoon-crawler.nomadcoders.workers.dev";
+  static const String today = "today";
 
 // Future: 비동기 데이터타입 with async await
-  Future<List<WebtoonModel>> getTodayToons() async {
+// static이 없다면 ApiService()로 인스턴스를 만들고 method를 써야 함. ApiService().getTodatToons()
+// static을 통해 클래스에 귀속된 method로 만듦, ApiService.getTodayToons() 가능
+  static Future<List<WebtoonModel>> getTodayToons() async {
     // Instance화된 FetchData 만들기
     List<WebtoonModel> webtoonInstances = [];
     // uri를 url로 변환
