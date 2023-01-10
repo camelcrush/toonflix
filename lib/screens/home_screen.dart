@@ -28,9 +28,24 @@ class HomeScreen extends StatelessWidget {
         future: webtoons,
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
-            return const Text('There is Data');
+            // Data를 가지고 있을 때 ListView, ListView.builder, ListView.separated 사용 가능
+            return ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: snapshot.data!.length,
+              // itemBuilder required
+              itemBuilder: ((context, index) {
+                // index를 통해 snapshot.data에 접근할 수 있음
+                var webtoon = snapshot.data![index];
+                return Text(webtoon.title);
+              }),
+              separatorBuilder: ((context, index) => const SizedBox(
+                    width: 20,
+                  )),
+            );
           }
-          return const Text('Loading...');
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }),
       ),
     );
