@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toonflix/screens/detail_screen.dart';
 
 class Webtoon extends StatelessWidget {
   final String title, thumb, id;
@@ -12,32 +13,49 @@ class Webtoon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: 250,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 15,
-                  offset: const Offset(10, 10),
-                  color: Colors.black.withOpacity(0.3),
-                )
-              ]),
-          child: Image.network(thumb),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
+    // 사용자 Gesture
+    return GestureDetector(
+      onTap: (() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            // Widget에 에니메이션 효과를 주어 스크린을 이동하는 효과
+            builder: (context) => DetailScreen(
+              title: title,
+              thumb: thumb,
+              id: id,
+            ),
+            fullscreenDialog: true,
           ),
-        ),
-      ],
+        );
+      }),
+      child: Column(
+        children: [
+          Container(
+            width: 250,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 15,
+                    offset: const Offset(10, 10),
+                    color: Colors.black.withOpacity(0.3),
+                  )
+                ]),
+            child: Image.network(thumb),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
