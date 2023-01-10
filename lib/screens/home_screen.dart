@@ -29,18 +29,15 @@ class HomeScreen extends StatelessWidget {
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
             // Data를 가지고 있을 때 ListView, ListView.builder, ListView.separated 사용 가능
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data!.length,
-              // itemBuilder required
-              itemBuilder: ((context, index) {
-                // index를 통해 snapshot.data에 접근할 수 있음
-                var webtoon = snapshot.data![index];
-                return Text(webtoon.title);
-              }),
-              separatorBuilder: ((context, index) => const SizedBox(
-                    width: 20,
-                  )),
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 25,
+                ),
+                Expanded(
+                  child: makeList(snapshot),
+                ),
+              ],
             );
           }
           return const Center(
@@ -48,6 +45,49 @@ class HomeScreen extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      scrollDirection: Axis.horizontal,
+      itemCount: snapshot.data!.length,
+      // itemBuilder required
+      itemBuilder: ((context, index) {
+        // index를 통해 snapshot.data에 접근할 수 있음
+        var webtoon = snapshot.data![index];
+        return Column(
+          children: [
+            Container(
+              width: 250,
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15,
+                      offset: const Offset(10, 10),
+                      color: Colors.black.withOpacity(0.3),
+                    )
+                  ]),
+              child: Image.network(webtoon.thumb),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              webtoon.title,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ],
+        );
+      }),
+      separatorBuilder: ((context, index) => const SizedBox(
+            width: 40,
+          )),
     );
   }
 }
