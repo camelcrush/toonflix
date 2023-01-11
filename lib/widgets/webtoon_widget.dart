@@ -31,6 +31,7 @@ class Webtoon extends StatelessWidget {
       }),
       child: Column(
         children: [
+          // Hero: 페이지 이동에 대한 에니매이션 효과
           Hero(
             tag: id,
             child: Container(
