@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toonflix/models/webtoon_detail_model.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/services/api_service.dart';
@@ -25,12 +26,54 @@ class _DetailScreenState extends State<DetailScreen> {
 
   late Future<WebtoonDetailModel> webtoon;
   late Future<List<WebtoonEpisodeModel>> episodes;
+  // localstorage 선언
+  late SharedPreferences prefs;
+  bool isLiked = false;
+
+// UI 초기 세팅 시 localStorage 불러오기
+  Future initPrefs() async {
+    // ShredpPreferences : localStorage Package
+    // localStorage 만들기
+    prefs = await SharedPreferences.getInstance();
+    final likedToons = prefs.getStringList('likedToons');
+    if (likedToons != null) {
+      // List에 id가 포함되어 있으면 Sate : true로 변경
+      if (likedToons.contains(widget.id) == true) {
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } else {
+      // 디바이스에서 처음 접속하면 storage가 없을 수 있기 때문에
+      await prefs.setStringList('likedToons', []);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     webtoon = ApiService.getToonById(widget.id);
     episodes = ApiService.getLatestEpisodesById(widget.id);
+    initPrefs();
+  }
+
+  onHeartTap() async {
+    // StringList 불러오기
+    final likedToons = prefs.getStringList('likedToons');
+    // List에 id 포함여부에 따라 추가/제거
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.id);
+      } else {
+        likedToons.add(widget.id);
+      }
+      // 변경된 List 다시 localStorage에 저장
+      await prefs.setStringList('likedToons', likedToons);
+      // State값 변경하기
+      setState(() {
+        isLiked = !isLiked;
+      });
+    }
   }
 
   @override
@@ -48,6 +91,13 @@ class _DetailScreenState extends State<DetailScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+              onPressed: onHeartTap,
+              icon: Icon(
+                isLiked ? Icons.favorite : Icons.favorite_outline_outlined,
+              ))
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
